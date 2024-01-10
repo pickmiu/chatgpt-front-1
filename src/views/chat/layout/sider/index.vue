@@ -1,6 +1,6 @@
 <script setup lang='ts'>
 import type { CSSProperties } from 'vue'
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import { NButton, NLayoutSider, useDialog } from 'naive-ui'
 import List from './List.vue'
 import Footer from './Footer.vue'
@@ -60,6 +60,10 @@ const mobileSafeArea = computed(() => {
     }
   }
   return {}
+})
+
+onMounted(() => {
+  handleAdd()
 })
 
 watch(
