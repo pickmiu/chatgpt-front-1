@@ -11,7 +11,8 @@ import { NButton, NCard, NTabPane, NTabs } from 'naive-ui'
             <p class="text">这是一个解答你的问题的网站</p>
           </NTabPane>
 
-          <NTabPane name="use" tab="开始使用">
+          <NTabPane class="use" name="use" tab="开始使用">
+            <img class="gongzhanghao" src="/gongzhonghao1.jpeg"/>
             <router-link :to="{ path: '/chatbox' }">
               <NButton class="text" type="primary">
                 点击开始使用
@@ -40,11 +41,13 @@ import { NButton, NCard, NTabPane, NTabs } from 'naive-ui'
         text-align: center;
         height: 92vh;
     }
+
     .text{
-      margin-top: 20vh;
+      margin-top: 15vh;
       margin-bottom: 10vh;
       font-size: 15px;
     }
+
     .foot{
         display: flex;
         align-items: center;
@@ -54,9 +57,23 @@ import { NButton, NCard, NTabPane, NTabs } from 'naive-ui'
         color: #666;
         font-size: 12px;
     }
+
     .gov-img{
         display: inline;
         margin: 0 5px;
         width: 16px;
+    }
+
+    .gongzhanghao{
+      margin-top: 20vh;
+      height: 103px;
+      width: 300px;
+    }
+
+    .use{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 </style>
