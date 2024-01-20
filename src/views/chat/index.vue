@@ -3,7 +3,7 @@ import type { Ref } from 'vue'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { NAutoComplete, NButton, NInput, useDialog, useMessage } from 'naive-ui'
+import { NAutoComplete, NButton, NInput, useDialog, useMessage, NSelect } from 'naive-ui'
 import html2canvas from 'html2canvas'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
@@ -39,6 +39,22 @@ const conversationList = computed(() => dataSources.value.filter(item => (!item.
 const prompt = ref<string>('')
 const loading = ref<boolean>(false)
 const inputRef = ref<Ref | null>(null)
+
+// 默认使用gpt-3.5-turbo模型
+const model = ref<string>('gpt-3.5-turbo')
+const options = [
+  {
+    label: isMobile.value ? "GPT3.5" : "gpt-3.5-turbo",
+    value: 'gpt-3.5-turbo'
+  },
+  {
+    label: isMobile.value ? "GPT3.5-16k" : "gpt-3.5-turbo-16k",
+    value: 'gpt-3.5-turbo-16k'
+  },
+  {
+    label: isMobile.value ? "GPT4" : "gpt-4",
+    value: 'gpt-4'
+  }];
 
 // 添加PromptStore
 const promptStore = usePromptStore()
@@ -109,6 +125,7 @@ async function onConversation() {
       await fetchChatAPIProcess<Chat.ConversationResponse>({
         prompt: message,
         options,
+        model: model.value,
         signal: controller.signal,
         onDownloadProgress: ({ event }) => {
           const xhr = event.target
@@ -240,6 +257,7 @@ async function onRegenerate(index: number) {
       await fetchChatAPIProcess<Chat.ConversationResponse>({
         prompt: message,
         options,
+        model: model.value,
         signal: controller.signal,
         onDownloadProgress: ({ event }) => {
           const xhr = event.target
@@ -523,11 +541,14 @@ onUnmounted(() => {
               <SvgIcon icon="ri:download-2-line" />
             </span>
           </HoverButton>
-          <HoverButton @click="toggleUsingContext">
+          <HoverButton v-if="!isMobile" @click="toggleUsingContext">
             <span class="text-xl" :class="{ 'text-[#4b9e5f]': usingContext, 'text-[#a8071a]': !usingContext }">
               <SvgIcon icon="ri:chat-history-line" />
             </span>
           </HoverButton>
+
+          <n-select :consistent-menu-width="false" style="width:auto;" v-model:value="model" :options="options" />
+
           <NAutoComplete v-model:value="prompt" :options="searchOptions" :render-label="renderOption">
             <template #default="{ handleInput, handleBlur, handleFocus }">
               <NInput

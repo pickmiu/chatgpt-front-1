@@ -16,8 +16,8 @@ export function defaultSetting(): UserState {
   return {
     userInfo: {
       avatar: '',
-      name: 'ChatGPT-3.5',
-      description: '使用中遇到问题联系邮箱 johntangly@163.com',
+      name: 'AI搜索小助手',
+      description: '使用中遇到问题请反馈公众号《AI搜索小助手》',
     },
   }
 }
