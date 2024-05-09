@@ -60,6 +60,13 @@ export function fetchSession<T>() {
   })
 }
 
+export function fetchVersionInfo<T>(accessToken : string) {
+  return post<T>({
+    url: '/version/info',
+    data: { accessToken }
+  })
+}
+
 export function fetchVerify<T>(token: string) {
   return post<T>({
     url: '/verify',

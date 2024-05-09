@@ -39,6 +39,8 @@ function handleClearAll() {
       chatStore.clearHistory()
       if (isMobile.value)
         appStore.setSiderCollapsed(true)
+      // fix：清空后，添加一个新的聊天，无聊天记录的bug
+      handleAdd()
     },
   })
 }
@@ -76,6 +78,11 @@ watch(
     flush: 'post',
   },
 )
+
+function goToTutorial() {
+  window.location.href = 'https://mp.weixin.qq.com/s/ekY2VyNE84WNpMimKx1BeQ';
+}
+
 </script>
 
 <template>
@@ -100,6 +107,15 @@ watch(
         <div class="flex-1 min-h-0 pb-4 overflow-hidden">
           <List />
         </div>
+
+        <div class="flex items-center px-4 space-x-4">
+          <div class="flex-1">
+            <NButton block type="primary" @click="goToTutorial">
+                使用教程
+            </NButton>
+          </div>
+        </div>
+
         <div class="flex items-center p-4 space-x-4">
           <div class="flex-1">
             <NButton block @click="show = true">

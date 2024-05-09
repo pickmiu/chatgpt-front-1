@@ -41,20 +41,21 @@ const loading = ref<boolean>(false)
 const inputRef = ref<Ref | null>(null)
 
 // 默认使用gpt-3.5-turbo模型
-const model = ref<string>('gpt-3.5-turbo')
+const model = ref<string>('ChatGPT 3.5')
 const options = [
   {
-    label: isMobile.value ? "GPT3.5" : "gpt-3.5-turbo",
-    value: 'gpt-3.5-turbo'
+    label: isMobile.value ? "GPT3.5" : "ChatGPT 3.5",
+    value: 'ChatGPT 3.5'
   },
   {
-    label: isMobile.value ? "GPT3.5-16k" : "gpt-3.5-turbo-16k",
-    value: 'gpt-3.5-turbo-16k'
+    label: isMobile.value ? "GPT4" : "ChatGPT 4",
+    value: 'ChatGPT 4'
   },
   {
-    label: isMobile.value ? "GPT4" : "gpt-4",
-    value: 'gpt-4'
-  }];
+    label: isMobile.value ? "画图" : "图片生成 DALL·E",
+    value: 'DALL.E-3'
+  }
+];
 
 // 添加PromptStore
 const promptStore = usePromptStore()
@@ -171,8 +172,7 @@ async function onConversation() {
     await fetchChatAPIOnce()
   }
   catch (error: any) {
-    const errorMessage = error?.message ?? t('common.wrong')
-
+    const errorMessage = error?.message ?? ''
     if (error.message === 'canceled') {
       updateChatSome(
         +uuid,
@@ -192,7 +192,7 @@ async function onConversation() {
         +uuid,
         dataSources.value.length - 1,
         {
-          text: `${currentChat.text}\n[${errorMessage}]`,
+          text: `${currentChat.text}\n`,
           error: false,
           loading: false,
         },
@@ -311,7 +311,7 @@ async function onRegenerate(index: number) {
       return
     }
 
-    const errorMessage = error?.message ?? t('common.wrong')
+    const errorMessage = error?.message ?? ''
 
     updateChat(
       +uuid,
@@ -556,7 +556,7 @@ onUnmounted(() => {
                 v-model:value="prompt"
                 type="textarea"
                 :placeholder="placeholder"
-                :autosize="{ minRows: 1, maxRows: isMobile ? 4 : 8 }"
+                :autosize="{ minRows: 1, maxRows: isMobile ? 6 : 10 }"
                 @input="handleInput"
                 @focus="handleFocus"
                 @blur="handleBlur"

@@ -1,16 +1,18 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
-import { NButton, NInput, NPopconfirm, NSelect, useMessage } from 'naive-ui'
+import { NButton, NInput, NPopconfirm, NSelect, useMessage, NTag } from 'naive-ui'
 import type { Language, Theme } from '@/store/modules/app/helper'
 import { SvgIcon } from '@/components/common'
-import { useAppStore, useUserStore } from '@/store'
-import type { UserInfo } from '@/store/modules/user/helper'
+import { useAppStore, useAuthStore } from '@/store'
 import { getCurrentDate } from '@/utils/functions'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { t } from '@/locales'
+import { fetchVersionInfo } from '@/api'
+import { Type } from 'naive-ui/es/button/src/interface'
 
 const appStore = useAppStore()
-const userStore = useUserStore()
+
+const authStore = useAuthStore()
 
 const { isMobile } = useBasicLayout()
 
@@ -18,13 +20,10 @@ const ms = useMessage()
 
 const theme = computed(() => appStore.theme)
 
-const userInfo = computed(() => userStore.userInfo)
+const versionDesc = ref("免费体验版 点击查看升级方案")
+const versionStyle = ref<Type>("primary")
 
-const avatar = ref(userInfo.value.avatar ?? '')
-
-const name = ref(userInfo.value.name ?? '')
-
-const description = ref(userInfo.value.description ?? '')
+const tokenStr = ref<string>(authStore.token ?? '') 
 
 const language = computed({
   get() {
@@ -63,15 +62,15 @@ const languageOptions: { label: string; key: Language; value: Language }[] = [
   { label: '繁體中文', key: 'zh-TW', value: 'zh-TW' },
 ]
 
-function updateUserInfo(options: Partial<UserInfo>) {
-  userStore.updateUserInfo(options)
-  ms.success(t('common.success'))
-}
-
-function handleReset() {
-  userStore.resetUserInfo()
-  ms.success(t('common.success'))
-  window.location.reload()
+function setToken() {
+  if (tokenStr.value.length > 0 && tokenStr.value.trim().length === 0) {
+    // 不能为空格
+    ms.error('请输入合法的通行证码（不能为空格）')
+  } else {
+    authStore.setToken(tokenStr.value)
+    refreshVersion()
+    ms.success(t('common.success'))
+  }
 }
 
 function exportData(): void {
@@ -122,44 +121,69 @@ function handleImportButtonClick(): void {
   if (fileInput)
     fileInput.click()
 }
+
+refreshVersion()
+function refreshVersion(): void {
+  // 专业版 2024.01.08 到期
+  if (tokenStr.value.length > 0 && tokenStr.value.trim().length === 0) {
+    // 输入的是空格
+  } else if (tokenStr.value.length === 0) {
+    // 清空了token
+    versionDesc.value = "免费体验版 点击查看升级方案"
+    versionStyle.value = "primary"
+  } else {
+    // 输入了正确格式的通行码
+    fetchVersionInfo<string>(tokenStr.value)
+    .then(response => { 
+      console.log(response.data)
+      versionDesc.value = response.data
+      if (response.data.includes("过期") || response.data.includes("无效")) {
+        versionStyle.value = "error"
+      } else if (response.data.includes("经典")) {
+        versionStyle.value = "info"
+      } else if (response.data.includes("专业")) {
+        versionStyle.value = "warning"
+      }
+    })
+    .catch(error => {
+      versionDesc.value = "网络无法连接"
+      versionStyle.value = "error"
+    });
+    versionDesc.value = "加载中..."
+    versionStyle.value = "primary"
+  }
+}
+
+function goPay() {
+  window.location.href = 'https://mpsonr56i0.feishu.cn/docx/ErpTdCokfoUiiMxbH37cOiPunFB?from=from_copylink';
+}
+
 </script>
 
 <template>
   <div class="p-4 space-y-5 min-h-[200px]">
     <div class="space-y-6">
       <div class="flex items-center space-x-4">
-        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.avatarLink') }}</span>
+        <span class="flex-shrink-0 w-[100px]">通行证码</span>  
         <div class="flex-1">
-          <NInput v-model:value="avatar" placeholder="" />
+          <NInput v-model:value="tokenStr" placeholder="联系微信公众号 AI搜索小助手 获取" />
         </div>
-        <NButton size="tiny" text type="primary" @click="updateUserInfo({ avatar })">
+        <NButton size="tiny" text type="primary" @click="setToken()">
           {{ $t('common.save') }}
         </NButton>
       </div>
+  
       <div class="flex items-center space-x-4">
-        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.name') }}</span>
-        <div class="w-[200px]">
-          <NInput v-model:value="name" placeholder="" />
-        </div>
-        <NButton size="tiny" text type="primary" @click="updateUserInfo({ name })">
-          {{ $t('common.save') }}
-        </NButton>
-      </div>
-      <div class="flex items-center space-x-4">
-        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.description') }}</span>
+        <span class="flex-shrink-0 w-[100px]">版本</span>
         <div class="flex-1">
-          <NInput v-model:value="description" placeholder="" />
+          <n-button strong ghost v-bind:type="versionStyle" @click="goPay">
+            {{ versionDesc }}
+          </n-button>
         </div>
-        <NButton size="tiny" text type="primary" @click="updateUserInfo({ description })">
-          {{ $t('common.save') }}
-        </NButton>
       </div>
-      <div
-        class="flex items-center space-x-4"
-        :class="isMobile && 'items-start'"
-      >
-        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.chatHistory') }}</span>
 
+      <div class="flex items-center space-x-4" :class="isMobile && 'items-start'">
+        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.chatHistory') }}</span>
         <div class="flex flex-wrap items-center gap-4">
           <NButton size="small" @click="exportData">
             <template #icon>
@@ -216,12 +240,11 @@ function handleImportButtonClick(): void {
           />
         </div>
       </div>
-      <div class="flex items-center space-x-4">
-        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.resetUserInfo') }}</span>
-        <NButton size="small" @click="handleReset">
-          {{ $t('common.reset') }}
-        </NButton>
+      <div class="flex items-center flex-col space-x-4"> 
+        <img class="w-72" src="/gongzhonghao1.jpeg"/>
+        <n-tag class="mt-5" type="success"> 遇到任何问题请联系上面的官方微信公众号 </n-tag>
       </div>
+      
     </div>
   </div>
 </template>

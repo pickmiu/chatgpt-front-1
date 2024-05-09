@@ -17,7 +17,7 @@ export function defaultSetting(): UserState {
     userInfo: {
       avatar: '',
       name: 'AI搜索小助手',
-      description: '使用中遇到问题请反馈公众号《AI搜索小助手》',
+      description: '点击右侧按钮打开设置',
     },
   }
 }

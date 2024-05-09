@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NButton, NCard, NTabPane, NTabs } from 'naive-ui'
+import { NButton, NCard, NTabPane, NTabs, NTag } from 'naive-ui'
 </script>
 
 <template>
@@ -12,6 +12,7 @@ import { NButton, NCard, NTabPane, NTabs } from 'naive-ui'
           </NTabPane>
 
           <NTabPane class="use" name="use" tab="开始使用">
+            <n-tag type="success" style="margin-top: 12vh;">下面是官方微信公众号，关注公众号不迷路！</n-tag>
             <img class="gongzhanghao" src="/gongzhonghao1.jpeg"/>
             <router-link :to="{ path: '/chatbox' }">
               <NButton class="text" type="primary">
@@ -21,7 +22,14 @@ import { NButton, NCard, NTabPane, NTabs } from 'naive-ui'
           </NTabPane>
 
           <NTabPane name="contact" tab="联系我们">
-            <p class="text">合作洽谈联系邮箱 johntangly@163.com</p>
+            <div>
+              <n-tag type="success" style="margin-top: 12vh;">合作洽谈联系邮箱 johntangly@163.com</n-tag>
+             </div>
+            
+            <div> 
+              <p style="margin-top: 12vh;">我们具有丰富、可靠的技术能力，给有需求的个人、企业、组织提供优质、快速、稳定的Al服务，帮助企业员工用上Al，创造更多收益，提升工作效率。</p>
+            </div>
+            
           </NTabPane>
         </NTabs>
       </NCard>
@@ -65,7 +73,7 @@ import { NButton, NCard, NTabPane, NTabs } from 'naive-ui'
     }
 
     .gongzhanghao{
-      margin-top: 20vh;
+      margin-top: 12vh;
       height: 103px;
       width: 300px;
     }

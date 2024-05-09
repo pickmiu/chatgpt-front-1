@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { getToken, removeToken, setToken } from './helper'
+import { getToken, setToken } from './helper'
 import { store } from '@/store/helper'
 import { fetchSession } from '@/api'
 
@@ -43,8 +43,8 @@ export const useAuthStore = defineStore('auth-store', {
     },
 
     removeToken() {
-      this.token = undefined
-      removeToken()
+      // this.token = undefined
+      // removeToken()
     },
   },
 })
