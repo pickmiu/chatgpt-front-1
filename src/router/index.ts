@@ -26,6 +26,20 @@ const routes: RouteRecordRaw[] = [
   },
 
   {
+    path: '/setting',
+    name: 'setting',
+    component: ChatLayout,
+    redirect: '/chat/1/setting',
+    children: [
+      {
+        path: '/chat/:uuid?/:component?',
+        name: 'Chat',
+        component: () => import('@/views/chat/index.vue'),
+      },
+    ],
+  },
+
+  {
     path: '/404',
     name: '404',
     component: () => import('@/views/exception/404/index.vue'),
@@ -35,6 +49,36 @@ const routes: RouteRecordRaw[] = [
     path: '/500',
     name: '500',
     component: () => import('@/views/exception/500/index.vue'),
+  },
+
+  {
+    path: '/pay/item',
+    name: 'itemBaseInfo',
+    component: () => import('@/views/pay/itemBaseInfo.vue'),
+  },
+
+  {
+    path: '/pay/address',
+    name: 'receiveAddress',
+    component: () => import('@/views/pay/receiveAddress.vue'),
+  },
+
+  {
+    path: '/pay/confirm/:orderId?/:identify?',
+    name: 'orderPayConfirm',
+    component: () => import('@/views/pay/orderPayConfirm.vue'),
+  },
+
+  {
+    path: '/pay/result/:orderId?/:identify?',
+    name: 'result',
+    component: () => import('@/views/pay/result.vue'),
+  },
+
+  {
+    path: '/trial',
+    name: 'trial',
+    component: () => import('@/views/pay/trial.vue'),
   },
 
   {

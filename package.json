@@ -3,7 +3,7 @@
   "version": "2.11.1",
   "private": false,
   "description": "ChatGPT Web",
-  "author": "ChenZhaoYu <chenzhaoyu1994@gmail.com>",
+  "author": "johntangly@163.com",
   "keywords": [
     "chatgpt-web",
     "chatgpt",
@@ -29,9 +29,11 @@
     "html2canvas": "^1.4.1",
     "katex": "^0.16.4",
     "markdown-it": "^13.0.1",
-    "naive-ui": "^2.34.3",
+    "naive-ui": "^2.38.2",
     "pinia": "^2.0.33",
+    "pnpm-check": "1.0.0-alpha.0",
     "vue": "^3.2.47",
+    "vue-clipboard3": "^2.0.0",
     "vue-i18n": "^9.2.2",
     "vue-router": "^4.1.6"
   },

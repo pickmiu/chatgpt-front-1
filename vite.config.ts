@@ -23,7 +23,7 @@ function setupPlugins(env: ImportMetaEnv): PluginOption[] {
 
 export default defineConfig((env) => {
   const viteEnv = loadEnv(env.mode, process.cwd()) as unknown as ImportMetaEnv
-
+  
   return {
     resolve: {
       alias: {
@@ -31,6 +31,7 @@ export default defineConfig((env) => {
       },
     },
     plugins: setupPlugins(viteEnv),
+    define: {__VUE_I18N_FULL_INSTALL__: true, __VUE_I18N_LEGACY_API__: true, __INTLIFY_PROD_DEVTOOLS__: false},
     server: {
       host: '0.0.0.0',
       port: 1002,

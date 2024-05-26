@@ -63,9 +63,9 @@ const languageOptions: { label: string; key: Language; value: Language }[] = [
 ]
 
 function setToken() {
+  tokenStr.value = tokenStr.value.trim()
   if (tokenStr.value.length > 0 && tokenStr.value.trim().length === 0) {
-    // 不能为空格
-    ms.error('请输入合法的通行证码（不能为空格）')
+    ms.error('请输入格式正确的通行证码')
   } else {
     authStore.setToken(tokenStr.value)
     refreshVersion()
@@ -236,7 +236,7 @@ function goPay() {
             style="width: 140px"
             :value="language"
             :options="languageOptions"
-            @update-value="value => appStore.setLanguage(value)"
+            @update-value="(value: Language) => appStore.setLanguage(value)"
           />
         </div>
       </div>
@@ -244,7 +244,6 @@ function goPay() {
         <img class="w-72" src="/gongzhonghao1.jpeg"/>
         <n-tag class="mt-5" type="success"> 遇到任何问题请联系上面的官方微信公众号 </n-tag>
       </div>
-      
     </div>
   </div>
 </template>

@@ -1,6 +1,5 @@
 import type { AxiosProgressEvent, AxiosResponse, GenericAbortSignal } from 'axios'
 import request from './axios'
-// import { useAuthStore } from '@/store'
 
 export interface HttpOption {
   url: string
@@ -79,4 +78,4 @@ export function post<T = any>(
   })
 }
 
-export default post
+export default {get,post}

@@ -1,10 +1,21 @@
 <script setup lang='ts'>
 import { defineAsyncComponent, ref } from 'vue'
 import { HoverButton, SvgIcon, UserAvatar } from '@/components/common'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
 
 const Setting = defineAsyncComponent(() => import('@/components/common/Setting/index.vue'))
 
+// 是否展示某一个组件
+const { component } = route.params as { component: string }
+
 const show = ref(false)
+
+if (component !== undefined && component !== "") {
+  show.value = true
+}
+
 </script>
 
 <template>
