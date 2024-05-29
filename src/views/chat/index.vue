@@ -52,6 +52,10 @@ const options = [
     value: 'ChatGPT 4'
   },
   {
+    label: isMobile.value ? "GPT4o" : "ChatGPT 4o 最新",
+    value: 'ChatGPT 4 o'
+  },
+  {
     label: isMobile.value ? "画图" : "图片生成 DALL·E",
     value: 'DALL.E-3'
   }
@@ -556,7 +560,7 @@ onUnmounted(() => {
                 v-model:value="prompt"
                 type="textarea"
                 :placeholder="placeholder"
-                :autosize="{ minRows: 1, maxRows: isMobile ? 6 : 10 }"
+                :autosize="{ minRows: 1, maxRows: isMobile ? 6 : 14 }"
                 @input="handleInput"
                 @focus="handleFocus"
                 @blur="handleBlur"
