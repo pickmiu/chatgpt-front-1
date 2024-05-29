@@ -1,14 +1,27 @@
 <script setup lang="ts">
 import { NButton, NCheckbox } from 'naive-ui'
-import { computed } from 'vue'
+import { computed,ref } from 'vue'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { draftOrderStore, Version, Duration } from '@/store/modules/pay'
 import { useRouter } from 'vue-router'
+import OpenInOtherBrowser from './openInOtherBrowser.vue'
+
 const router = useRouter()
 
 const store = draftOrderStore()
 
 const { isMobile } = useBasicLayout()
+
+const openInWechat = ref<boolean>(false)
+openInWechat.value = isOpenInWechat()
+
+function isOpenInWechat() {
+    if (navigator.userAgent.toLowerCase().indexOf('micromessenger') !== -1) {
+        return true
+    } else {
+        return false
+    }
+}
 
 function onKefuButtonClick() {
     window.location.href = 'https://work.weixin.qq.com/kfid/kfc25b8866217d145b5'
@@ -76,7 +89,7 @@ const onBackButtonClick = () => {
 </script>
 
 <template>
-    <div class="w-full h-full flex justify-center" :class="{ 'items-center': !isMobile }">
+    <div v-if="!openInWechat" class="w-full h-full flex justify-center" :class="{ 'items-center': !isMobile }">
 
         <div class="w-96 text-gray-600 p-10" :class="{ 'boxshadow-1': !isMobile, 'rounded': !isMobile }">
             <div class="w-full h-10 flex items-center">
@@ -166,6 +179,8 @@ const onBackButtonClick = () => {
             </div>
         </div>
     </div>
+
+    <OpenInOtherBrowser v-if="openInWechat"/>
 </template>
 
 <style scoped>

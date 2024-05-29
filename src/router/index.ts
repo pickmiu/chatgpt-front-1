@@ -82,6 +82,12 @@ const routes: RouteRecordRaw[] = [
   },
 
   {
+    path: '/openInOtherBrowser',
+    name: 'openInOtherBrowser',
+    component: () => import('@/views/pay/openInOtherBrowser.vue'),
+  },
+
+  {
     path: '/:pathMatch(.*)*',
     name: 'notFound',
     redirect: '/404',
