@@ -23,7 +23,7 @@ const { isMobile } = useBasicLayout()
 const textRef = ref<HTMLElement>()
 
 const mdi = new MarkdownIt({
-  html: false,
+  html: true,
   linkify: true,
   highlight(code, language) {
     const validLang = !!(language && hljs.getLanguage(language))
@@ -106,11 +106,17 @@ onUnmounted(() => {
 <template>
   <div class="text-black" :class="wrapClass">
     <div ref="textRef" class="leading-relaxed break-words">
-      <div v-if="!inversion">
+      <!-- 下个版本删除 -->
+      <!-- <div v-if="!inversion"> 修改前
         <div v-if="!asRawText" class="markdown-body" :class="{ 'markdown-body-generate': loading }" v-html="text" />
         <div v-else class="whitespace-pre-wrap" v-text="text" />
       </div>
-      <div v-else class="whitespace-pre-wrap" v-text="text" />
+      <div v-else class="whitespace-pre-wrap" v-text="text" /> -->
+
+      <div>
+        <div v-if="!asRawText" class="markdown-body" :class="{ 'markdown-body-generate': loading }" v-html="text" />
+        <div v-else class="whitespace-pre-wrap" v-text="text" />
+      </div>
     </div>
   </div>
 </template>

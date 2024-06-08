@@ -51,7 +51,7 @@ function handleClear() {
           class="flex items-center justify-center w-11 h-11"
           @click="handleUpdateCollapsed"
         >
-          <SvgIcon v-if="collapsed" class="text-2xl" icon="ri:align-justify" />
+          <SvgIcon v-if="collapsed" class="text-2xl ml-3" icon="ri:menu-fill" />
           <SvgIcon v-else class="text-2xl" icon="ri:align-right" />
         </button>
       </div>
@@ -61,7 +61,9 @@ function handleClear() {
       >
         {{ currentChatHistory?.title ?? '' }}
       </h1>
-      <div class="flex items-center space-x-2">
+      <div class="flex items-center space-x-2 mr-2">
+        <slot></slot>
+
         <HoverButton @click="handleExport">
           <span class="text-xl text-[#4f555e] dark:text-white">
             <SvgIcon icon="ri:download-2-line" />

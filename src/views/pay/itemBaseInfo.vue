@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NButton, NCheckbox } from 'naive-ui'
+import { NButton, NCheckbox, NTag } from 'naive-ui'
 import { computed,ref } from 'vue'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { draftOrderStore, Version, Duration } from '@/store/modules/pay'
@@ -134,7 +134,7 @@ const onBackButtonClick = () => {
                 <p class="text-family text-base font-normal">购买版本</p>
             </div>
 
-            <div class="w-full h-10">
+            <div class="w-full h-10 whitespace-nowrap">
                 <n-checkbox :checked="isClassic" size="large" style="margin-right: 12px" @click="chooseClassic">
                     经典版
                 </n-checkbox>
@@ -148,18 +148,22 @@ const onBackButtonClick = () => {
                 <p class="text-family text-base font-normal">购买时长</p>
             </div>
 
-            <div class="w-full h-10">
-                <n-checkbox :checked="isMonthly" size="large" style="margin-right: 12px" @click="chooseMonthly">
+            <div class="w-full h-10 whitespace-nowrap">
+                <n-checkbox :checked="isMonthly" size="large" @click="chooseMonthly">
                     1个月
                 </n-checkbox>
 
-                <n-checkbox :checked="isQuarter" size="large" style="margin-right: 12px" @click="chooseQuarter">
+                <n-checkbox :checked="isQuarter" class="ml-2" size="large" @click="chooseQuarter">
                     3个月
                 </n-checkbox>
 
-                <n-checkbox :checked="isYear" size="large" style="margin-right: 12px" @click="chooseYear">
+                <n-tag class="flex justify-center" style="height: 16px; width: 28px;" size="small" round type="error"> 7折 </n-tag>
+
+                <n-checkbox :checked="isYear" class="ml-4" size="large" @click="chooseYear">
                     12个月
                 </n-checkbox>
+
+                <n-tag class="flex justify-center" style="height: 16px; width: 28px;" size="small" round type="error"> 5折 </n-tag>
             </div>
 
             <div class="w-full mt-6 h-10">
@@ -171,6 +175,7 @@ const onBackButtonClick = () => {
                 <span class="text-family text-2xl font-normal"> {{ store.calculateRealPrice }} </span>
                 <span class="text-family text-sm font-normal line-through ml-2" v-if="showOriginalPrice"
                     style="color: #9aa5b8;">￥{{ store.calculateOriginalPrice }}</span>
+                <n-tag v-if=" (isClassic || isPro) && (isMonthly || isQuarter || isYear) " class="flex justify-center ml-4" size="small" round type="error"> 省 {{ store.calculateOriginalPrice - store.calculateRealPrice }} 元 </n-tag>
             </div>
 
             <div class="w-full mt-6 flex items-center justify-between">

@@ -1,9 +1,10 @@
 <script setup lang='ts'>
 import type { Ref } from 'vue'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, h, onBeforeUnmount, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { NAutoComplete, NButton, NInput, useDialog, useMessage, NSelect } from 'naive-ui'
+import { MdHourglass } from '@vicons/ionicons4'
+import { NIcon, NAutoComplete, NButton, NInput, useDialog, useMessage, NSelect, NUpload, NUploadTrigger, UploadFileInfo, UploadSettledFileInfo, MessageReactive, UploadInst, c } from 'naive-ui'
 import html2canvas from 'html2canvas'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
@@ -44,19 +45,19 @@ const inputRef = ref<Ref | null>(null)
 const model = ref<string>('ChatGPT 3.5')
 const options = [
   {
-    label: isMobile.value ? "GPT3.5" : "ChatGPT 3.5",
-    value: 'ChatGPT 3.5'
+    label: isMobile.value ? "GPT-3.5" : "ChatGPT 3.5",
+    value: 'ChatGPT 3.5',
   },
   {
-    label: isMobile.value ? "GPT4" : "ChatGPT 4",
+    label: isMobile.value ? "GPT-4" : "ChatGPT 4",
     value: 'ChatGPT 4'
   },
   {
-    label: isMobile.value ? "GPT4o" : "ChatGPT 4o 最新",
+    label: isMobile.value ? "GPT-4o" : "ChatGPT 4o 最新",
     value: 'ChatGPT 4 o'
   },
   {
-    label: isMobile.value ? "画图" : "图片生成 DALL·E",
+    label: isMobile.value ? "图片生成" : "DALL·E-3 图片生成",
     value: 'DALL.E-3'
   }
 ];
@@ -430,6 +431,85 @@ function handleStop() {
   }
 }
 
+// 文件上传相关
+const fileUploadDisabled = computed(() => {
+  return loading.value
+})
+
+let fileStatus : 'initial' | 'uploading' | 'cancel' = 'initial'
+
+let uploadMessage: MessageReactive | null = null
+
+function removeMessage() {
+  if (uploadMessage) {
+    uploadMessage.destroy()
+    uploadMessage = null
+  }
+}
+
+onBeforeUnmount(removeMessage)
+
+function createUploadMessage() {
+  if (!uploadMessage) {
+    uploadMessage = ms.success('文件上传中...', {
+      duration: 0,
+      closable: true,
+      icon: () => h(NIcon, null, { default: () => h(MdHourglass) }),
+      onClose: function() {
+        fileStatus = 'cancel'
+      }
+    })
+  }
+}
+
+function handleFileBeforeUpload(data: {
+  file: UploadSettledFileInfo;
+  fileList: UploadSettledFileInfo[];
+}) {
+  fileStatus = 'uploading'
+  const fileType = data.file.type
+  if (fileType?.startsWith('image')) {
+    if (!model.value.match("ChatGPT 4")) {
+        // 仅ChatGPT 4 支持图片
+        ms.info("使用图片分析功能，请切换至ChatGPT 4")
+        return false;
+    }
+  }
+  createUploadMessage()
+  return true;
+}
+
+function handleFileUploadFinish({
+  file,
+  event
+}: {
+  file: UploadFileInfo
+  event?: ProgressEvent
+}) {
+  removeMessage()
+  const responseData: { status: string; message: string; data: { fileType: string, fileUrl: string; fileContent: string}; } = JSON.parse((event?.target as XMLHttpRequest).response);
+  console.log(responseData)
+  if (fileStatus === 'cancel') {
+    fileStatus = 'initial'
+    return file
+  }
+  if (responseData != undefined && responseData.status === 'Success') {
+    // ms.success("文件上传成功")
+    let content = '<div id="file_talkwithai_' + responseData.data.fileType+'"><img src="' + responseData.data.fileUrl + '" width=320 height=320 /></div>'
+    if (responseData.data.fileContent !== null) {
+       content = content + '<div id="fileContent">'+ responseData.data.fileContent + '</div>'
+    } 
+    prompt.value = content
+    handleSubmit()
+  } else if (responseData === undefined || responseData === null || responseData.message === undefined || responseData.message === '') {
+    ms.error("文件上传失败")
+  } else {
+    ms.error(responseData.message)
+  }
+  fileStatus = 'initial'
+  return file
+}
+
 // 可优化部分
 // 搜索选项计算，这里使用value作为索引项，所以当出现重复value时渲染异常(多项同时出现选中效果)
 // 理想状态下其实应该是key作为索引项,但官方的renderOption会出现问题，所以就需要value反renderLabel实现
@@ -492,14 +572,13 @@ onUnmounted(() => {
       :using-context="usingContext"
       @export="handleExport"
       @handle-clear="handleClear"
-    />
+    >
+     <n-select class="mr-2" :consistent-menu-width="false" style="width:auto;" v-model:value="model" :options="options" />
+    </HeaderComponent>
     <main class="flex-1 overflow-hidden">
       <div id="scrollRef" ref="scrollRef" class="h-full overflow-hidden overflow-y-auto">
-        <div
-          id="image-wrapper"
-          class="w-full max-w-screen-xl m-auto dark:bg-[#101014]"
-          :class="[isMobile ? 'p-2' : 'p-4']"
-        >
+        <div id="image-wrapper" class="w-full max-w-screen-xl m-auto dark:bg-[#101014]"
+          :class="[isMobile ? 'p-2' : 'p-4']">
           <template v-if="!dataSources.length">
             <div class="flex items-center justify-center mt-4 text-center text-neutral-300">
               <SvgIcon icon="ri:bubble-chart-fill" class="mr-2 text-3xl" />
@@ -508,17 +587,9 @@ onUnmounted(() => {
           </template>
           <template v-else>
             <div>
-              <Message
-                v-for="(item, index) of dataSources"
-                :key="index"
-                :date-time="item.dateTime"
-                :text="item.text"
-                :inversion="item.inversion"
-                :error="item.error"
-                :loading="item.loading"
-                @regenerate="onRegenerate(index)"
-                @delete="handleDelete(index)"
-              />
+              <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.dateTime" :text="item.text"
+                :inversion="item.inversion" :error="item.error" :loading="item.loading"
+                @regenerate="onRegenerate(index)" @delete="handleDelete(index)" />
               <div class="sticky bottom-0 left-0 flex justify-center">
                 <NButton v-if="loading" type="warning" @click="handleStop">
                   <template #icon>
@@ -536,36 +607,42 @@ onUnmounted(() => {
       <div class="w-full max-w-screen-xl m-auto">
         <div class="flex items-center justify-between space-x-2">
           <HoverButton v-if="!isMobile" @click="handleClear">
-            <span class="text-xl text-[#4f555e] dark:text-white">
+            <span class="text-2xl text-[#4f555e] dark:text-white">
               <SvgIcon icon="ri:delete-bin-line" />
             </span>
           </HoverButton>
           <HoverButton v-if="!isMobile" @click="handleExport">
-            <span class="text-xl text-[#4f555e] dark:text-white">
+            <span class="text-2xl text-[#4f555e] dark:text-white">
               <SvgIcon icon="ri:download-2-line" />
             </span>
           </HoverButton>
           <HoverButton v-if="!isMobile" @click="toggleUsingContext">
-            <span class="text-xl" :class="{ 'text-[#4b9e5f]': usingContext, 'text-[#a8071a]': !usingContext }">
+            <span class="text-2xl" :class="{ 'text-[#4b9e5f]': usingContext, 'text-[#a8071a]': !usingContext }">
               <SvgIcon icon="ri:chat-history-line" />
             </span>
           </HoverButton>
 
-          <n-select :consistent-menu-width="false" style="width:auto;" v-model:value="model" :options="options" />
+          <!-- http://file.talkwithai.xyz/api/file/upload -->
+          <n-upload abstract action="http://127.0.0.1:8081/api/file/upload" @finish="handleFileUploadFinish" 
+            @before-upload="handleFileBeforeUpload" 
+            accept=".jpg,.jpeg,.webp,.png,.xls,.xlsx,.doc,.docx,.pdf,.txt,.csv,.pptx,.ppt"
+            :disabled="fileUploadDisabled">
+            <n-upload-trigger #="{ handleClick }" abstract>
+              <HoverButton  @click="handleClick">
+                <span class="text-2xl text-[#4f555e] dark:text-white">
+                  <SvgIcon icon="ri:file-add-line" />
+                </span>
+              </HoverButton>
+            </n-upload-trigger>
+          </n-upload>
+
+          <n-select v-if="!isMobile" :consistent-menu-width="false" style="width:auto;" v-model:value="model" :options="options" />
 
           <NAutoComplete v-model:value="prompt" :options="searchOptions" :render-label="renderOption">
             <template #default="{ handleInput, handleBlur, handleFocus }">
-              <NInput
-                ref="inputRef"
-                v-model:value="prompt"
-                type="textarea"
-                :placeholder="placeholder"
-                :autosize="{ minRows: 1, maxRows: isMobile ? 6 : 14 }"
-                @input="handleInput"
-                @focus="handleFocus"
-                @blur="handleBlur"
-                @keypress="handleEnter"
-              />
+              <NInput ref="inputRef" v-model:value="prompt" type="textarea" :placeholder="placeholder"
+                :autosize="{ minRows: 1, maxRows: isMobile ? 6 : 14 }" @input="handleInput" @focus="handleFocus"
+                @blur="handleBlur" @keypress="handleEnter" />
             </template>
           </NAutoComplete>
           <NButton type="primary" :disabled="buttonDisabled" @click="handleSubmit">
