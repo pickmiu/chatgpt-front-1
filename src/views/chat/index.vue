@@ -4,7 +4,7 @@ import { computed, h, onBeforeUnmount, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { MdHourglass } from '@vicons/ionicons4'
-import { NIcon, NAutoComplete, NButton, NInput, useDialog, useMessage, NSelect, NUpload, NUploadTrigger, UploadFileInfo, UploadSettledFileInfo, MessageReactive, UploadInst, c } from 'naive-ui'
+import { NIcon, NAutoComplete, NButton, NInput, useDialog, useMessage, NSelect, NUpload, NUploadTrigger, UploadFileInfo, UploadSettledFileInfo, MessageReactive } from 'naive-ui'
 import html2canvas from 'html2canvas'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
@@ -622,8 +622,7 @@ onUnmounted(() => {
             </span>
           </HoverButton>
 
-          <!-- http://file.talkwithai.xyz/api/file/upload -->
-          <n-upload abstract action="http://127.0.0.1:8081/api/file/upload" @finish="handleFileUploadFinish" 
+          <n-upload abstract action="http://file.talkwithai.xyz/api/file/upload" @finish="handleFileUploadFinish" 
             @before-upload="handleFileBeforeUpload" 
             accept=".jpg,.jpeg,.webp,.png,.xls,.xlsx,.doc,.docx,.pdf,.txt,.csv,.pptx,.ppt"
             :disabled="fileUploadDisabled">
