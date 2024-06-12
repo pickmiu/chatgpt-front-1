@@ -12,7 +12,7 @@ const { component } = route.params as { component: string }
 
 const show = ref(false)
 
-if (component !== undefined && component !== "") {
+if (component === "setting") {
   show.value = true
 }
 

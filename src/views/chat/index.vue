@@ -49,12 +49,12 @@ const options = [
     value: 'ChatGPT 3.5',
   },
   {
-    label: isMobile.value ? "GPT-4" : "ChatGPT 4",
-    value: 'ChatGPT 4'
-  },
-  {
     label: isMobile.value ? "GPT-4o" : "ChatGPT 4o 最新",
     value: 'ChatGPT 4 o'
+  },
+  {
+    label: isMobile.value ? "GPT-4" : "ChatGPT 4",
+    value: 'ChatGPT 4'
   },
   {
     label: isMobile.value ? "图片生成" : "DALL·E-3 图片生成",
@@ -487,8 +487,7 @@ function handleFileUploadFinish({
   event?: ProgressEvent
 }) {
   removeMessage()
-  const responseData: { status: string; message: string; data: { fileType: string, fileUrl: string; fileContent: string}; } = JSON.parse((event?.target as XMLHttpRequest).response);
-  console.log(responseData)
+  const responseData: { status: string; message: string; data: { fileType: string, fileUrl: string; fileContent: string}; } = JSON.parse((event?.target as XMLHttpRequest).response)
   if (fileStatus === 'cancel') {
     fileStatus = 'initial'
     return file
@@ -622,7 +621,7 @@ onUnmounted(() => {
             </span>
           </HoverButton>
 
-          <n-upload abstract action="http://file.talkwithai.xyz/api/file/upload" @finish="handleFileUploadFinish" 
+          <n-upload abstract action="https://file.talkwithai.xyz/api/file/upload" @finish="handleFileUploadFinish" 
             @before-upload="handleFileBeforeUpload" 
             accept=".jpg,.jpeg,.webp,.png,.xls,.xlsx,.doc,.docx,.pdf,.txt,.csv,.pptx,.ppt"
             :disabled="fileUploadDisabled">

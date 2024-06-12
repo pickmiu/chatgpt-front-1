@@ -9,6 +9,7 @@ import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { t } from '@/locales'
 import { fetchVersionInfo } from '@/api'
 import { Type } from 'naive-ui/es/button/src/interface'
+import { Document } from '@/components/common'
 
 const appStore = useAppStore()
 
@@ -135,7 +136,6 @@ function refreshVersion(): void {
     // 输入了正确格式的通行码
     fetchVersionInfo<string>(tokenStr.value)
     .then(response => { 
-      console.log(response.data)
       versionDesc.value = response.data
       if (response.data.includes("过期") || response.data.includes("无效")) {
         versionStyle.value = "error"
@@ -154,8 +154,12 @@ function refreshVersion(): void {
   }
 }
 
+const showDocument = ref(false)
+const documentUrl = ref("https://www.yuque.com/u34348689/gd5ohu/vi4sgrlpoqhgonm6?view=doc_embed&from=asite")
+const documentTitle = ref("通行证订阅方案")
+
 function goPay() {
-  window.location.href = 'https://mpsonr56i0.feishu.cn/docx/ErpTdCokfoUiiMxbH37cOiPunFB?from=from_copylink';
+  showDocument.value = true
 }
 
 </script>
@@ -245,5 +249,6 @@ function goPay() {
         <n-tag class="mt-5" type="success"> 遇到任何问题请联系上面的官方微信公众号 </n-tag>
       </div>
     </div>
+    <Document v-model:visible="showDocument" :documentUrl="documentUrl" :title="documentTitle"/>
   </div>
 </template>

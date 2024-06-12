@@ -1,13 +1,18 @@
 <script setup lang='ts'>
 import type { CSSProperties } from 'vue'
-import { computed, ref, watch, onMounted } from 'vue'
+import { computed, ref, watch, onMounted, defineAsyncComponent } from 'vue'
 import { NButton, NLayoutSider, useDialog } from 'naive-ui'
 import List from './List.vue'
 import Footer from './Footer.vue'
-import { useAppStore, useChatStore } from '@/store'
+import { useAppStore, useChatStore, useUserStore } from '@/store'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { PromptStore, SvgIcon } from '@/components/common'
 import { t } from '@/locales'
+import { useRoute } from 'vue-router'
+
+const userStore = useUserStore()
+
+const Document = defineAsyncComponent(() => import('@/components/common/Document/index.vue'))
 
 const appStore = useAppStore()
 const chatStore = useChatStore()
@@ -79,24 +84,55 @@ watch(
   },
 )
 
+
+// 教程文档
+const showTutorialDocument = ref(false)
+const tutorialDocumentUrl = ref("https://www.yuque.com/u34348689/gd5ohu/gwngglm7u0r6ud6e?view=doc_embed&from=asite")
+const tutorialDocumentTitle = ref("使用教程")
 function goToTutorial() {
-  window.location.href = 'https://mp.weixin.qq.com/s/ekY2VyNE84WNpMimKx1BeQ';
+  showTutorialDocument.value = true
+}
+
+// 订阅方案文档 有两个地方有
+const showSubscribeDocument = ref(false)
+const subscribeDocumentUrl = ref("https://www.yuque.com/u34348689/gd5ohu/vi4sgrlpoqhgonm6?view=doc_embed&from=asite")
+const subscribeDocumentTitle = ref("通行证订阅方案")
+const route = useRoute()
+// 是否展示某一个组件
+const { component } = route.params as { component: string }
+if (component === 'subscribe') {
+  showSubscribeDocument.value = true
+}
+
+// 首页通知文档 
+const showNewsDocument = ref(false)
+const newsDocumentUrl = ref("https://www.yuque.com/u34348689/gd5ohu/garszwiv5mwgddq8?view=doc_embed&from=asite")
+const newsDocumentTitle = ref("新闻")
+
+showNewsToday()
+function showNewsToday() {
+  const now = new Date()
+  // 间隔16h以上打开一次
+  const hoursBetweenNum = getHoursBetween(userStore.userInfo.lastTimeShowNews, now.getTime())
+  if (hoursBetweenNum >= 16 && showSubscribeDocument.value === false) {
+    showNewsDocument.value = true
+    userStore.updateLastTimeShowNews(now.getTime())
+  }
+}
+function getHoursBetween(time1: number, time2: number): number {
+  if (time1 === null || time1 === undefined || time2 === null || time2 === undefined) {
+    return 1000
+  }
+  const difference = Math.abs(time1 - time2)
+  return Math.floor(difference / (1000 * 60 * 60));
 }
 
 </script>
 
 <template>
-  <NLayoutSider
-    :collapsed="collapsed"
-    :collapsed-width="0"
-    :width="260"
-    :show-trigger="isMobile ? false : 'arrow-circle'"
-    collapse-mode="transform"
-    position="absolute"
-    bordered
-    :style="getMobileClass"
-    @update-collapsed="handleUpdateCollapsed"
-  >
+  <NLayoutSider :collapsed="collapsed" :collapsed-width="0" :width="260"
+    :show-trigger="isMobile ? false : 'arrow-circle'" collapse-mode="transform" position="absolute" bordered
+    :style="getMobileClass" @update-collapsed="handleUpdateCollapsed">
     <div class="flex flex-col h-full" :style="mobileSafeArea">
       <main class="flex flex-col flex-1 min-h-0">
         <div class="p-4">
@@ -111,7 +147,7 @@ function goToTutorial() {
         <div class="flex items-center px-4 space-x-4">
           <div class="flex-1">
             <NButton block type="primary" @click="goToTutorial">
-                使用教程
+              使用教程
             </NButton>
           </div>
         </div>
@@ -134,4 +170,8 @@ function goToTutorial() {
     <div v-show="!collapsed" class="fixed inset-0 z-40 w-full h-full bg-black/40" @click="handleUpdateCollapsed" />
   </template>
   <PromptStore v-model:visible="show" />
+
+  <Document v-model:visible="showTutorialDocument" :documentUrl="tutorialDocumentUrl" :title="tutorialDocumentTitle" />
+  <Document v-model:visible="showSubscribeDocument" :documentUrl="subscribeDocumentUrl" :title="subscribeDocumentTitle" />
+  <Document v-model:visible="showNewsDocument" :documentUrl="newsDocumentUrl" :title="newsDocumentTitle" />
 </template>

@@ -40,6 +40,20 @@ const routes: RouteRecordRaw[] = [
   },
 
   {
+    path: '/subscribe',
+    name: 'subscribe',
+    component: ChatLayout,
+    redirect: '/chat/1/subscribe',
+    children: [
+      {
+        path: '/chat/:uuid?/:component?',
+        name: 'Chat',
+        component: () => import('@/views/chat/index.vue'),
+      },
+    ],
+  },
+
+  {
     path: '/404',
     name: '404',
     component: () => import('@/views/exception/404/index.vue'),

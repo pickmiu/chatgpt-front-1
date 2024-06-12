@@ -18,5 +18,10 @@ export const useUserStore = defineStore('user-store', {
     recordState() {
       setLocalState(this.$state)
     },
+
+    updateLastTimeShowNews(lastTimeShowNews : number) {
+      this.userInfo.lastTimeShowNews = lastTimeShowNews
+      this.recordState()
+    }
   },
 })

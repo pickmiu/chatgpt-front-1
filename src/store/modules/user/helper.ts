@@ -6,6 +6,8 @@ export interface UserInfo {
   avatar: string
   name: string
   description: string
+  // 最近一次展示首页新闻
+  lastTimeShowNews: number
 }
 
 export interface UserState {
@@ -18,6 +20,7 @@ export function defaultSetting(): UserState {
       avatar: '',
       name: 'AI搜索小助手',
       description: '点击右侧按钮打开设置',
+      lastTimeShowNews: 1717171200000
     },
   }
 }
