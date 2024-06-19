@@ -43,6 +43,7 @@ watch(showModal, (newValue, oldValue) => {
 </script>
 
 <template>
+    <!-- PC -->
     <n-modal v-if="!isMobile" v-model:show="showModal" preset="card" style="width:685px; height: 590px;" :title="title" size="huge"
         transform-origin="center">
         <template #header-extra></template>
@@ -61,6 +62,7 @@ watch(showModal, (newValue, oldValue) => {
         </template>
     </n-modal>
 
+   <!-- Mobile -->
     <n-modal v-else v-model:show="showModal" preset="card" style="width:95%; height:80vh" :title="title" size="huge"
         transform-origin="center">
         <template #header-extra>
@@ -68,7 +70,9 @@ watch(showModal, (newValue, oldValue) => {
 
         <iframe ref="frame" :class="{ 'hidden': !loaded }" width="100%" height="100%" :src="documentUrl"></iframe>
 
-        <n-skeleton v-if="!loaded" text size="medium" :repeat="9" />
+        <div v-if="!loaded" class="custom-h-1 overflow-hidden"> 
+            <n-skeleton text size="medium" :repeat="100" /> 
+        </div>
 
         <template #footer>
             <div class="flex justify-between">
@@ -85,5 +89,9 @@ watch(showModal, (newValue, oldValue) => {
 <style scoped>
     .text-grey-1 {
        color: #8c8c8c;
+    }
+    
+    .custom-h-1 {
+        max-height: 50vh;
     }
 </style>
