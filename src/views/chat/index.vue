@@ -41,15 +41,15 @@ const prompt = ref<string>('')
 const loading = ref<boolean>(false)
 const inputRef = ref<Ref | null>(null)
 
-// 默认使用gpt-3.5-turbo模型
-const model = ref<string>('ChatGPT 3.5')
+// 默认模型
+const model = ref<string>('ChatGPT 4 o mini')
 const options = [
   {
-    label: isMobile.value ? "GPT-3.5" : "ChatGPT 3.5",
-    value: 'ChatGPT 3.5',
+    label: isMobile.value ? "GPT-4o mini" : "ChatGPT 4o-mini 最快",
+    value: 'ChatGPT 4 o mini',
   },
   {
-    label: isMobile.value ? "GPT-4o" : "ChatGPT 4o 最新",
+    label: isMobile.value ? "GPT-4o" : "ChatGPT 4o 最智能",
     value: 'ChatGPT 4 o'
   },
   {
@@ -59,6 +59,10 @@ const options = [
   {
     label: isMobile.value ? "图片生成" : "DALL·E-3 图片生成",
     value: 'DALL.E-3'
+  },
+  {
+    label: isMobile.value ? "GPT-3.5" : "ChatGPT 3.5",
+    value: 'ChatGPT 3.5',
   }
 ];
 

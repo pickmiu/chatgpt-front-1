@@ -249,6 +249,6 @@ function goPay() {
         <n-tag class="mt-5" type="success"> 遇到任何问题请联系上面的官方微信公众号 </n-tag>
       </div>
     </div>
-    <Document v-model:visible="showDocument" :documentUrl="documentUrl" :title="documentTitle"/>
+    <Document v-model:visible="showDocument" :documentUrl="documentUrl" :title="documentTitle" :large=true />
   </div>
 </template>

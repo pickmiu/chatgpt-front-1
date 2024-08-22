@@ -171,7 +171,7 @@ function getHoursBetween(time1: number, time2: number): number {
   </template>
   <PromptStore v-model:visible="show" />
 
-  <Document v-model:visible="showTutorialDocument" :documentUrl="tutorialDocumentUrl" :title="tutorialDocumentTitle" />
-  <Document v-model:visible="showSubscribeDocument" :documentUrl="subscribeDocumentUrl" :title="subscribeDocumentTitle" />
-  <Document v-model:visible="showNewsDocument" :documentUrl="newsDocumentUrl" :title="newsDocumentTitle" />
+  <Document v-model:visible="showTutorialDocument" :documentUrl="tutorialDocumentUrl" :title="tutorialDocumentTitle" :large=true />
+  <Document v-model:visible="showSubscribeDocument" :documentUrl="subscribeDocumentUrl" :title="subscribeDocumentTitle" :large=true />
+  <Document v-model:visible="showNewsDocument" :documentUrl="newsDocumentUrl" :title="newsDocumentTitle" :large=false />
 </template>
