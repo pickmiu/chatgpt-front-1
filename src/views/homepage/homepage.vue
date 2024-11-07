@@ -1,5 +1,14 @@
 <script setup lang="ts">
 import { NButton, NCard, NTabPane, NTabs, NTag } from 'naive-ui'
+import { onBeforeRouteLeave } from 'vue-router';
+// 设置进入页面时的标题
+document.title = '问题解答';
+
+// 设置离开页面时的标题
+onBeforeRouteLeave((to, from, next) => {
+  document.title = 'AI搜索小助手';
+  next();
+});
 </script>
 
 <template>
