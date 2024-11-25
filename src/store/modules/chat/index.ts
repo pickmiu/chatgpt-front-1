@@ -94,10 +94,16 @@ export const useChatStore = defineStore('chat-store', {
     },
 
     addChatByUuid(uuid: number, chat: Chat.Chat) {
+      // 定制化处理 修复bug(为了兼容图片,前端历史聊天记录标题显示div代码),图片消息title都设置为图片
+      let title = chat.text
+      if (chat.text.startsWith('<div id="file_talkwithai')) {
+        title = '图片'
+      }
+      // 分割线
       if (!uuid || uuid === 0) {
         if (this.history.length === 0) {
           const uuid = Date.now()
-          this.history.push({ uuid, title: chat.text, isEdit: false })
+          this.history.push({ uuid, title: title, isEdit: false })
           this.chat.push({ uuid, data: [chat] })
           this.active = uuid
           this.recordState()
@@ -105,7 +111,7 @@ export const useChatStore = defineStore('chat-store', {
         else {
           this.chat[0].data.push(chat)
           if (this.history[0].title === t('chat.newChatTitle'))
-            this.history[0].title = chat.text
+            this.history[0].title = title
           this.recordState()
         }
       }
@@ -114,7 +120,7 @@ export const useChatStore = defineStore('chat-store', {
       if (index !== -1) {
         this.chat[index].data.push(chat)
         if (this.history[index].title === t('chat.newChatTitle'))
-          this.history[index].title = chat.text
+          this.history[index].title = title
         this.recordState()
       }
     },

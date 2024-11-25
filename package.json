@@ -23,12 +23,13 @@
     "common:prepare": "husky install"
   },
   "dependencies": {
-    "@traptitech/markdown-it-katex": "^3.6.0",
+    "@vscode/markdown-it-katex": "^1.1.0",
     "@vueuse/core": "^9.13.0",
     "highlight.js": "^11.7.0",
     "html2canvas": "^1.4.1",
     "katex": "^0.16.4",
     "markdown-it": "^13.0.1",
+    "mermaid-it-markdown": "^1.0.8",
     "naive-ui": "^2.38.2",
     "pinia": "^2.0.33",
     "pnpm-check": "1.0.0-alpha.0",
