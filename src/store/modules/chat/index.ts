@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { defaultState, getLocalState, setLocalState } from './helper'
 import { router } from '@/router'
 import { t } from '@/locales'
+import { extractFileName } from '@/utils/functions'
 
 export const useChatStore = defineStore('chat-store', {
   state: (): Chat.ChatState => getLocalState(),
@@ -97,7 +98,7 @@ export const useChatStore = defineStore('chat-store', {
       // 定制化处理 修复bug(为了兼容图片,前端历史聊天记录标题显示div代码),图片消息title都设置为图片
       let title = chat.text
       if (chat.text.startsWith('<div id="file_talkwithai')) {
-        title = '图片'
+        title = extractFileName(chat.text)
       }
       // 分割线
       if (!uuid || uuid === 0) {

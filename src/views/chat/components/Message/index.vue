@@ -8,6 +8,7 @@ import { useIconRender } from '@/hooks/useIconRender'
 import { t } from '@/locales'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { copyToClip } from '@/utils/copy'
+import { extractFileName, extractFileUrl } from '@/utils/functions'
 
 interface Props {
   dateTime?: string
@@ -60,26 +61,6 @@ if (props.text?.startsWith('<div id="file_talkwithai')) {
     // 解析文件链接
     fileUrl.value = extractFileUrl(props.text)
   }
-}
-
-function extractFileName(text: string) {
-    const regex = /fileName=([^"]*)/
-    const match = text.match(regex)
-    if (match) {
-      return match[1]
-    } else {
-      return "文件名称获取失败"
-    } 
-}
-
-function extractFileUrl(text: string) {
-    const regex = /<img[^>]+src="([^"]+)"[^>]*>/
-    const match = text.match(regex)
-    if (match) {
-      return match[1]
-    } else {
-      return "文件链接获取失败"
-    } 
 }
 
 function downloadFile() {

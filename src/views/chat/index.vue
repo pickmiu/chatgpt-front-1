@@ -15,7 +15,7 @@ import { HoverButton, SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useChatStore, usePromptStore } from '@/store'
 import { fetchChatAPIProcess } from '@/api'
-import { t } from '@/locales'
+import { t } from '@/locales' 
 
 let controller = new AbortController()
 
@@ -59,10 +59,6 @@ const options = [
   {
     label: isMobile.value ? "图片生成" : "DALL·E-3 图片生成",
     value: 'DALL.E-3'
-  },
-  {
-    label: isMobile.value ? "GPT-3.5" : "ChatGPT 3.5",
-    value: 'ChatGPT 3.5',
   }
 ];
 
@@ -470,6 +466,15 @@ function handleFileBeforeUpload(data: {
   file: UploadSettledFileInfo;
   fileList: UploadSettledFileInfo[];
 }) {
+  if (data.file.file !== undefined && data.file.file?.size != undefined) {
+    const fileSizeMB = data.file.file?.size / (1024*1024)
+    console.log(fileSizeMB + "MB")
+    if (fileSizeMB > 10) {
+      ms.error("文件过大，仅支持10MB以内")
+      return false;
+    }
+  }
+  
   fileStatus = 'uploading'
   const fileType = data.file.type
   if (fileType?.startsWith('image')) {
@@ -490,27 +495,33 @@ function handleFileUploadFinish({
   file: UploadFileInfo
   event?: ProgressEvent
 }) {
-  removeMessage()
-  const responseData: { status: string; message: string; data: { fileType: string, fileUrl: string; fileContent: string}; } = JSON.parse((event?.target as XMLHttpRequest).response)
-  if (fileStatus === 'cancel') {
+  try {
+    removeMessage()
+    const responseData: { status: string; message: string; data: { fileType: string, fileUrl: string; fileContent: string}; } = JSON.parse((event?.target as XMLHttpRequest).response)
+    if (fileStatus === 'cancel') {
+      fileStatus = 'initial'
+      return file
+    }
+    if (responseData != undefined && responseData.status === 'Success') {
+      // ms.success("文件上传成功")
+      let content = '<div id="file_talkwithai_' + responseData.data.fileType+'"><img src="' + responseData.data.fileUrl + '" width=320 height=320 /></div>'
+      if (responseData.data.fileContent !== null) {
+        content = content + '<div id="fileContent">'+ responseData.data.fileContent + '</div>'
+      } 
+      prompt.value = content
+      handleSubmit()
+    } else if (responseData === undefined || responseData === null || responseData.message === undefined || responseData.message === '') {
+      ms.error("文件上传失败")
+    } else {
+      ms.error(responseData.message)
+    }
     fileStatus = 'initial'
+  } catch (error) {
+    console.log(error)
+    ms.error("文件上传失败")
+  } finally {
     return file
   }
-  if (responseData != undefined && responseData.status === 'Success') {
-    // ms.success("文件上传成功")
-    let content = '<div id="file_talkwithai_' + responseData.data.fileType+'"><img src="' + responseData.data.fileUrl + '" width=320 height=320 /></div>'
-    if (responseData.data.fileContent !== null) {
-       content = content + '<div id="fileContent">'+ responseData.data.fileContent + '</div>'
-    } 
-    prompt.value = content
-    handleSubmit()
-  } else if (responseData === undefined || responseData === null || responseData.message === undefined || responseData.message === '') {
-    ms.error("文件上传失败")
-  } else {
-    ms.error(responseData.message)
-  }
-  fileStatus = 'initial'
-  return file
 }
 
 // 可优化部分
