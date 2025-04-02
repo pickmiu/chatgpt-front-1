@@ -45,16 +45,20 @@ const inputRef = ref<Ref | null>(null)
 const model = ref<string>('ChatGPT 4 o mini')
 const options = [
   {
-    label: isMobile.value ? "GPT-4o mini" : "ChatGPT 4o-mini 最快",
+    label: isMobile.value ? "GPT-4o mini" : "ChatGPT 4o-mini 简单问题",
     value: 'ChatGPT 4 o mini',
   },
   {
-    label: isMobile.value ? "GPT-4o" : "ChatGPT 4o 最智能",
-    value: 'ChatGPT 4 o'
+    label: isMobile.value ? "DeepSeek-V3" : "DeepSeek V3 均衡",
+    value: 'DeepSeek V3'
   },
   {
-    label: isMobile.value ? "GPT-4" : "ChatGPT 4",
-    value: 'ChatGPT 4'
+    label: isMobile.value ? "DeepSeek-R1" : "DeepSeek R1 复杂问题",
+    value: 'DeepSeek R1'
+  },
+  {
+    label: isMobile.value ? "GPT-4o" : "ChatGPT 4o 均衡",
+    value: 'ChatGPT 4 o'
   },
   {
     label: isMobile.value ? "图片生成" : "DALL·E-3 图片生成",
