@@ -166,3 +166,67 @@ export function trial<T>(email : string) {
     data: {email}
   })
 }
+
+/**
+ * 退款信息实体类
+ */
+export class RefundInfo {
+  passportId: string;
+  orderId: string;
+  refundStatus: string;
+  totalAmount: number;
+  refundAmount: number;
+  version: string;
+  payTime: number;
+  usedDays: number;
+  totalDays: number;
+
+  constructor(passportId: string, orderId: string, refundStatus: string, totalAmount: number,
+    refundAmount: number, version: string, payTime: number, usedDays: number, totalDays: number) {
+      this.passportId = passportId;
+      this.orderId = orderId;
+      this.refundStatus = refundStatus;
+      this.totalAmount = totalAmount;
+      this.refundAmount = refundAmount;
+      this.version = version;
+      this.payTime = payTime;
+      this.usedDays = usedDays;
+      this.totalDays = totalDays;
+  }
+}
+
+/**
+ * 通过关键字查询通行证信息
+ * @param keyword 查询关键字（通行证ID/邮箱/手机号）
+ */
+export function queryPassport<T = Passport[]>(keyword: string) {
+  return post<T>({
+    url: '/order/passport/query',
+    data: { keyword }
+  })
+}
+
+/**
+ * 获取预退款详情
+ * @param passportId 通行证ID
+ */
+export function getPreRefundDetail<T = RefundInfo>(passportId: string) {
+  return post<T>({
+    url: '/order/preRefund/detail',
+    data: { passportId }
+  })
+}
+
+/**
+ * 申请退款
+ * @param passportId 通行证ID
+ */
+export function requestRefund<T = void>(passportId: string) {
+  return post<T>({
+    url: '/order/refund',
+    data: { passportId }
+  })
+}
+
+
+

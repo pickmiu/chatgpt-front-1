@@ -21,7 +21,7 @@ const ms = useMessage()
 
 const theme = computed(() => appStore.theme)
 
-const versionDesc = ref("免费体验版 点击查看升级方案")
+const versionDesc = ref("免费体验版")
 const versionStyle = ref<Type>("primary")
 
 const tokenStr = ref<string>(authStore.token ?? '') 
@@ -130,7 +130,7 @@ function refreshVersion(): void {
     // 输入的是空格
   } else if (tokenStr.value.length === 0) {
     // 清空了token
-    versionDesc.value = "免费体验版 点击查看升级方案"
+    versionDesc.value = "免费体验版"
     versionStyle.value = "primary"
   } else {
     // 输入了正确格式的通行码

@@ -2,7 +2,6 @@ import type { App } from 'vue'
 import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { setupPageGuard } from './permission'
-import { ChatLayout } from '@/views/chat/layout'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -12,46 +11,71 @@ const routes: RouteRecordRaw[] = [
   },
 
   {
+    path: '/close',
+    name: 'close',
+    component: () => import('@/views/homepage/close.vue'),
+  },
+
+  {
+    path: '/refund',
+    name: 'refund',
+    component: () => import('@/views/pay/refund.vue'),
+  },
+
+//   {
+//     path: '/chatbox',
+//     name: 'chatbox',
+//     component: ChatLayout,
+//     redirect: '/chat',
+//     children: [
+//       {
+//         path: '/chat/:uuid?',
+//         name: 'Chat',
+//         component: () => import('@/views/chat/index.vue'),
+//       },
+//     ],
+//   },
+
+
+  {
     path: '/chatbox',
     name: 'chatbox',
-    component: ChatLayout,
-    redirect: '/chat',
-    children: [
-      {
-        path: '/chat/:uuid?',
-        name: 'Chat',
-        component: () => import('@/views/chat/index.vue'),
-      },
-    ],
+    redirect: '/close',
   },
 
   {
-    path: '/setting',
-    name: 'setting',
-    component: ChatLayout,
-    redirect: '/chat/1/setting',
-    children: [
-      {
-        path: '/chat/:uuid?/:component?',
-        name: 'Chat',
-        component: () => import('@/views/chat/index.vue'),
-      },
-    ],
+    path: '/chat/:uuid?',
+    name: 'Chat', 
+    redirect: '/close',
   },
 
-  {
-    path: '/subscribe',
-    name: 'subscribe',
-    component: ChatLayout,
-    redirect: '/chat/1/subscribe',
-    children: [
-      {
-        path: '/chat/:uuid?/:component?',
-        name: 'Chat',
-        component: () => import('@/views/chat/index.vue'),
-      },
-    ],
-  },
+//   {
+//     path: '/setting',
+//     name: 'setting',
+//     component: ChatLayout,
+//     redirect: '/chat/1/setting',
+//     children: [
+//       {
+//         path: '/chat/:uuid?/:component?',
+//         name: 'Chat',
+//         component: () => import('@/views/chat/index.vue'),
+//       },
+//     ],
+//   },
+
+//   {
+//     path: '/subscribe',
+//     name: 'subscribe',
+//     component: ChatLayout,
+//     redirect: '/chat/1/subscribe',
+//     children: [
+//       {
+//         path: '/chat/:uuid?/:component?',
+//         name: 'Chat',
+//         component: () => import('@/views/chat/index.vue'),
+//       },
+//     ],
+//   },
 
   {
     path: '/404',

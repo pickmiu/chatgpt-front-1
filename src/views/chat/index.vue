@@ -482,9 +482,9 @@ function handleFileBeforeUpload(data: {
   fileStatus = 'uploading'
   const fileType = data.file.type
   if (fileType?.startsWith('image')) {
-    if (!model.value.match("ChatGPT 4")) {
+    if (!model.value.match("ChatGPT 4") && !model.value.match("DeepSeek") ) {
         // 仅ChatGPT 4 支持图片
-        ms.info("使用图片分析功能，请切换至ChatGPT 4")
+        ms.info("当前模型暂不支持图片")
         return false;
     }
   }
